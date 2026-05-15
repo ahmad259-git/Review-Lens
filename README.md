@@ -21,6 +21,7 @@ is built as a modern product discovery dashboard with a conversational AI assist
 - Product detail modal with price history and sample review sentiment.
 - AI shopping assistant interface for natural-language product discovery.
 - Login, signup, OTP email verification, Google authentication, and persistent auth state.
+- Dataset catalog page at `/datasets` with recommended public sources for electronics data.
 
 ## Authentication backend
 
@@ -61,7 +62,8 @@ Important values:
 
 - `MONGODB_URI`
 - `JWT_SECRET`
-- `CLIENT_URL`
+- `CLIENT_URL` (this Vite project uses `http://localhost:8080` by default)
+- `CLIENT_URLS` for extra allowed frontend origins, comma-separated
 - `GOOGLE_CLIENT_ID`
 - `VITE_GOOGLE_CLIENT_ID`
 - `VITE_API_URL`
@@ -69,6 +71,10 @@ Important values:
 
 If SMTP values are omitted during development, OTP codes are printed in the backend
 console for local testing only.
+
+If the signup page shows `Failed to fetch`, check that the browser URL is included
+in `CLIENT_URL` or `CLIENT_URLS`. The frontend in `vite.config.ts` runs on port
+`8080`, so `CLIENT_URL=http://localhost:8080` is the safest default.
 
 ## Local development
 
@@ -87,6 +93,43 @@ Run the frontend in a separate terminal:
 ```bash
 npm run dev
 ```
+
+## Dataset research and scraping
+
+Dataset source notes are maintained in:
+
+```text
+docs/datasets.md
+src/data/datasetSources.ts
+```
+
+Sample normalized records are included at:
+
+```text
+data/samples/review_lens_products_sample.json
+```
+
+Install optional Python scraper dependencies:
+
+```bash
+pip install -r requirements-data.txt
+```
+
+Example regional scrape commands:
+
+```bash
+python scripts/scrapers/south_asia_ecommerce_scraper.py \
+  --platform daraz \
+  --url "https://www.daraz.pk/smartphones/" \
+  --output daraz_smartphones.json
+
+python scripts/scrapers/south_asia_ecommerce_scraper.py \
+  --platform goto \
+  --url "https://www.goto.com.pk/computing-gaming" \
+  --output goto_computing_gaming.csv
+```
+
+Always check the target website terms of service and robots.txt before scraping.
 
 ## Build
 
