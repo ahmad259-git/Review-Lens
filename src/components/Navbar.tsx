@@ -2,12 +2,46 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Eye, LogOut, UserCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+
+          // Show navbar when scrolling up
+          if (currentScrollY < lastScrollY) {
+            setIsVisible(true);
+          }
+          // Hide navbar when scrolling down (but keep it visible at the top)
+          else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            setIsVisible(false);
+          }
+
+          setLastScrollY(currentScrollY);
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   return (
-    <nav className="fixed left-0 right-0 top-0 z-50 border-b border-border/80 bg-white/90 shadow-sm backdrop-blur-xl">
+    <nav className={`fixed left-0 right-0 top-0 z-50 border-b border-border/80 bg-white/90 shadow-sm backdrop-blur-xl transition-transform duration-300 ease-in-out ${
+      isVisible ? "translate-y-0" : "-translate-y-full"
+    }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">

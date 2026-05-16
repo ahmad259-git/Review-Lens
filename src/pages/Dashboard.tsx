@@ -4,6 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Bot,
   MessageSquare,
   Package,
@@ -24,7 +31,7 @@ import { mockProducts, type Product } from "@/data/mockData";
 import { productsApi } from "@/lib/productsApi";
 
 const ProductGridSkeleton = () => (
-  <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-6">
+  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xl:gap-4">
     {Array.from({ length: 8 }).map((_, index) => (
       <Card key={index} variant="default" className="h-full overflow-hidden">
         <div className="aspect-[4/3] animate-pulse bg-muted" />
@@ -223,7 +230,7 @@ const Dashboard = () => {
             </div>
           </section>
 
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {[
               { icon: Package, label: "Dataset products", value: products.length.toLocaleString(), change: datasetSource },
               { icon: Star, label: "Average rating", value: averageRating, change: "Live" },
@@ -231,56 +238,35 @@ const Dashboard = () => {
               { icon: ShieldCheck, label: "Reviews analyzed", value: totals.reviews.toLocaleString(), change: "Dataset" },
             ].map((stat, index) => (
               <Card key={index} variant="default" className="h-full">
-                <CardContent className="flex items-center gap-4 p-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-primary">
-                    <stat.icon className="h-6 w-6" />
+                <CardContent className="flex items-center gap-3 p-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-primary">
+                    <stat.icon className="h-5 w-5" />
                   </div>
-                  <div>
-                    <div className="font-display text-2xl font-bold">{stat.value}</div>
-                    <div className="text-xs font-medium text-muted-foreground">{stat.label}</div>
-                    <Badge variant="success" className="text-xs mt-1 max-w-[130px] truncate">{stat.change}</Badge>
+                  <div className="min-w-0">
+                    <div className="font-display text-lg font-bold truncate">{stat.value}</div>
+                    <div className="text-xs font-medium text-muted-foreground truncate">{stat.label}</div>
+                    <Badge variant="success" className="text-xs mt-1 truncate">{stat.change}</Badge>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </section>
 
-          <section className="grid gap-4 xl:grid-cols-[1.2fr_0.9fr_0.9fr]">
+          <section className="grid gap-3 md:grid-cols-2">
             <Card variant="default">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Store className="h-5 w-5 text-primary" />
-                  Market snapshot
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-                {[
-                  ["Top category", topCategory],
-                  ["Most active source", platformData.sort((a, b) => b.products - a.products)[0]?.name || "Amazon"],
-                  ["Best sentiment", bestSentimentCategory],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between rounded-2xl bg-muted/70 p-3">
-                    <span className="text-sm text-muted-foreground">{label}</span>
-                    <span className="text-sm font-bold">{value}</span>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card variant="default">
-              <CardHeader>
-                <CardTitle className="text-lg">Overall Sentiment</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Overall Sentiment</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-56 xl:h-44">
+                <div className="h-40 md:h-36">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={sentimentData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={42}
-                        outerRadius={72}
+                        innerRadius={32}
+                        outerRadius={56}
                         paddingAngle={5}
                         dataKey="value"
                       >
@@ -291,12 +277,12 @@ const Dashboard = () => {
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                <div className="mt-2 grid grid-cols-3 gap-1 text-xs">
                   {sentimentData.map((item) => (
-                    <div key={item.name} className="rounded-2xl bg-muted/60 p-2 text-center">
-                      <div className="mx-auto mb-1 h-2 w-8 rounded-full" style={{ backgroundColor: item.color }} />
-                      <p className="font-semibold">{item.name}</p>
-                      <p className="text-muted-foreground">{item.value}%</p>
+                    <div key={item.name} className="rounded-lg bg-muted/60 p-1 text-center">
+                      <div className="mx-auto mb-0.5 h-1.5 w-6 rounded-full" style={{ backgroundColor: item.color }} />
+                      <p className="font-semibold text-xs">{item.name}</p>
+                      <p className="text-muted-foreground text-xs">{item.value}%</p>
                     </div>
                   ))}
                 </div>
@@ -304,19 +290,19 @@ const Dashboard = () => {
             </Card>
 
             <Card variant="default">
-              <CardHeader>
-                <CardTitle className="text-lg">Products by Platform</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Products by Platform</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-56 xl:h-48">
+                <div className="h-40 md:h-36">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={platformData} layout="vertical">
-                      <XAxis type="number" stroke="hsl(var(--muted-foreground))" />
+                      <XAxis type="number" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 11 }} />
                       <YAxis
                         dataKey="name"
                         type="category"
                         stroke="hsl(var(--muted-foreground))"
-                        tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                        tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
                       />
                       <Tooltip
                         contentStyle={{
@@ -334,72 +320,96 @@ const Dashboard = () => {
             </Card>
           </section>
 
-          <section className="space-y-6">
+          <section className="space-y-4">
             <Card variant="default" className="sticky top-24 z-20 border-primary/10 bg-white/95 backdrop-blur">
-              <CardContent className="p-4 sm:p-5">
-                <div className="flex flex-col gap-4 lg:flex-row">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
-                      placeholder="Search products across all platforms..."
+                      placeholder="Search products..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
+                      className="pl-9 py-2 h-9 text-sm"
                     />
                   </div>
-                  <Button variant="outline" className="flex items-center gap-2 bg-white">
-                    <SlidersHorizontal className="w-4 h-4" />
-                    Advanced filters
-                  </Button>
-                  <Button variant="ghost" onClick={resetFilters}>
-                    Reset
-                  </Button>
-                </div>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="flex items-center gap-2 bg-white h-9"
+                      >
+                        <SlidersHorizontal className="w-4 h-4" />
+                        Filters
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <div className="px-2 py-2">
+                        <p className="text-sm font-semibold mb-2">Category</p>
+                        <div className="space-y-1 max-h-40 overflow-y-auto">
+                          {categories.map((category) => (
+                            <DropdownMenuCheckboxItem
+                              key={category}
+                              checked={selectedCategory === category}
+                              onCheckedChange={() => setSelectedCategory(category)}
+                            >
+                              {category}
+                            </DropdownMenuCheckboxItem>
+                          ))}
+                        </div>
+                      </div>
 
-                <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-                  {categories.map((category) => (
-                    <Button
-                      key={category}
-                      variant={selectedCategory === category ? "hero" : "secondary"}
-                      size="sm"
-                      className="shrink-0"
-                      onClick={() => setSelectedCategory(category)}
-                    >
-                      {category}
-                    </Button>
-                  ))}
-                </div>
+                      <DropdownMenuSeparator />
 
-                <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                  <Badge
-                    variant={selectedPlatform === null ? "default" : "outline"}
-                    className="shrink-0 cursor-pointer"
-                    onClick={() => setSelectedPlatform(null)}
-                  >
-                    All Platforms
-                  </Badge>
-                  {platforms.map((platform) => (
-                    <Badge
-                      key={platform}
-                      variant={selectedPlatform === platform ? "default" : "outline"}
-                      className="shrink-0 cursor-pointer"
-                      onClick={() => setSelectedPlatform(platform)}
-                    >
-                      {platform}
-                    </Badge>
-                  ))}
+                      <div className="px-2 py-2">
+                        <p className="text-sm font-semibold mb-2">Platform</p>
+                        <div className="space-y-1 max-h-40 overflow-y-auto">
+                          <DropdownMenuCheckboxItem
+                            checked={selectedPlatform === null}
+                            onCheckedChange={() => setSelectedPlatform(null)}
+                          >
+                            All Platforms
+                          </DropdownMenuCheckboxItem>
+                          {platforms.map((platform) => (
+                            <DropdownMenuCheckboxItem
+                              key={platform}
+                              checked={selectedPlatform === platform}
+                              onCheckedChange={() => setSelectedPlatform(platform)}
+                            >
+                              {platform}
+                            </DropdownMenuCheckboxItem>
+                          ))}
+                        </div>
+                      </div>
+
+                      <DropdownMenuSeparator />
+
+                      <div className="px-2 py-2">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={resetFilters}
+                          className="w-full text-xs h-8"
+                        >
+                          Reset All Filters
+                        </Button>
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </CardContent>
             </Card>
 
-            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
               <div>
-                <h2 className="font-display text-2xl font-bold">Dataset products</h2>
-                <p className="text-sm text-muted-foreground">
-                  Showing {filteredProducts.length} normalized products from public dataset sources.
+                <h2 className="font-display text-xl font-bold">Products</h2>
+                <p className="text-xs text-muted-foreground">
+                  Showing {filteredProducts.length} of {products.length} items
                 </p>
               </div>
-              <Badge variant="accent" className="w-fit">
+              <Badge variant="accent" className="w-fit text-xs">
                 Sorted by best insight score
               </Badge>
             </div>
@@ -415,7 +425,7 @@ const Dashboard = () => {
             {isLoadingProducts ? (
               <ProductGridSkeleton />
             ) : filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-6">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xl:gap-4">
                 {filteredProducts.map((product) => (
                   <ProductCard
                     key={product.id}
