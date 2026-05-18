@@ -143,7 +143,9 @@ GET /api/products?limit=24
 
 When `data/samples/review_lens_products_sample.json` is rebuilt by
 `scripts/datasets/extract_marketplace_products.py`, those extracted products are loaded
-directly by the backend and shown on the dashboard.
+directly by the backend and shown on the dashboard. The script also mirrors the same
+catalog to `public/data/samples/review_lens_products_sample.json` so the frontend can
+still render thousands of products if the backend is temporarily unreachable.
 
 The backend first loads `data/samples/review_lens_products_sample.json` (local normalized
 catalog), then optionally supplements it from the Hugging Face

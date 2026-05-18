@@ -32,6 +32,7 @@ import requests
 
 
 OUTPUT_PATH = Path("data/samples/review_lens_products_sample.json")
+PUBLIC_OUTPUT_PATH = Path("public/data/samples/review_lens_products_sample.json")
 
 AMAZON_SOURCE_URL = "https://www.kaggle.com/datasets/senkumaster/amazon-best-selling-electronics-dataset-2025"
 EBAY_SOURCE_URL = "https://www.kaggle.com/datasets/promptcloud/ebay-product-listing-dataset/data"
@@ -669,15 +670,28 @@ def main() -> None:
         default=str(OUTPUT_PATH),
         help="Output JSON path for normalized records.",
     )
+    parser.add_argument(
+        "--public-output",
+        default=str(PUBLIC_OUTPUT_PATH),
+        help="Optional public static JSON mirror for frontend-only fallback.",
+    )
     args = parser.parse_args()
 
     products = build_catalog(max(1, args.min_products))
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(products, indent=2), encoding="utf-8")
+    payload = json.dumps(products, indent=2)
+    output_path.write_text(payload, encoding="utf-8")
+
+    public_output_path = Path(args.public_output)
+    if str(public_output_path).strip():
+        public_output_path.parent.mkdir(parents=True, exist_ok=True)
+        public_output_path.write_text(payload, encoding="utf-8")
 
     counts = Counter(product["source_platform"] for product in products)
     print(f"Saved {len(products)} normalized products to {output_path}")
+    if str(public_output_path).strip():
+        print(f"Mirrored catalog to {public_output_path}")
     for source, count in sorted(counts.items()):
         print(f"- {source}: {count}")
 
