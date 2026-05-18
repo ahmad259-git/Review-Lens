@@ -30,6 +30,8 @@ import ChatInterface from "@/components/ChatInterface";
 import { mockProducts, type Product } from "@/data/mockData";
 import { productsApi } from "@/lib/productsApi";
 
+const DASHBOARD_PRODUCT_LIMIT = 10000;
+
 const ProductGridSkeleton = () => (
   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xl:gap-4">
     {Array.from({ length: 8 }).map((_, index) => (
@@ -99,7 +101,7 @@ const Dashboard = () => {
       setProductError("");
 
       try {
-        const response = await productsApi.list(500);
+        const response = await productsApi.list(DASHBOARD_PRODUCT_LIMIT);
         if (response.products.length > 0) {
           setProducts(response.products);
           setDatasetSource(response.source);

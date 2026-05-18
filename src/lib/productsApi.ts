@@ -462,7 +462,7 @@ const fetchBackendProducts = async (limit: number): Promise<ProductsResponse> =>
 };
 
 export const productsApi = {
-  list: async (limit = 500): Promise<ProductsResponse> => {
+  list: async (limit = MAX_PRODUCTS): Promise<ProductsResponse> => {
     const safeLimit = Math.min(Math.max(limit, 1), MAX_PRODUCTS);
     try {
       const backendResponse = await fetchBackendProducts(safeLimit);
